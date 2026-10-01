@@ -32,7 +32,8 @@ class GetPlanetPositions:
 
     def execute(self, moment: datetime) -> PositionsSnapshot:
         if moment.utcoffset() is None:
-            raise NaiveDatetimeError("Datetime must be timezone-aware")
+            raise NaiveDatetimeError(
+                f"Datetime must be timezone-aware, got {moment!r}")
 
         utc_moment = moment.astimezone(timezone.utc)
 
