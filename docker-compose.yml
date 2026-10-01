@@ -1,0 +1,17 @@
+# No "version:" key: it is obsolete in modern Docker Compose.
+services:
+  backend:
+    # Build context is ./backend, so the Dockerfile only sees backend files.
+    build: ./backend
+    # host_port:container_port -> http://localhost:8000
+    ports:
+      - "8000:8000"
+    # Restart automatically on crashes, unless we stopped it manually.
+    restart: unless-stopped
+    # Docker marks the container "healthy" only if /health answers.
+    # We use Python because the slim image does not ship curl.
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
