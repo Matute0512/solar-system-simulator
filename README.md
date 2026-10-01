@@ -85,6 +85,9 @@ the 3D scene (axes and scale) is done by the frontend
 Calculations are validated against JPL Horizons vector tables
 ([ADR 0003](docs/adr/0003-validation-against-jpl-horizons.md)).
 
+Requested dates must be timezone-aware ISO-8601 values. They are normalized to
+UTC internally; naive datetimes are rejected.
+
 ## API documentation
 
 FastAPI generates OpenAPI docs automatically:

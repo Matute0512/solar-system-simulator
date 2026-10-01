@@ -55,5 +55,4 @@ def test_normalizes_any_timezone_to_utc() -> None:
     # Aware datetimes compare equal across zones, so we check the offset itself.
     assert snapshot.moment.utcoffset() == timedelta(0)
     assert snapshot.moment == UTC_NOON
-    assert all(moment.utcoffset() == timedelta(0)
-               for _, moment in provider.calls)
+    assert all(moment.utcoffset() == timedelta(0) for _, moment in provider.calls)

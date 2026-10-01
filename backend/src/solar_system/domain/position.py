@@ -17,7 +17,8 @@ class Position:
     def __post_init__(self) -> None:
         if not all(math.isfinite(coord) for coord in (self.x, self.y, self.z)):
             raise ValueError(
-                f"Coordinates must be finite, got ({self.x}, {self.y}, {self.z}).")
+                f"Coordinates must be finite, got ({self.x}, {self.y}, {self.z})."
+            )
 
     @property
     def distance_from_origin(self) -> float:
