@@ -1,0 +1,13 @@
+# Local virtualenv is Windows-specific and would break inside a Linux container
+.venv
+__pycache__
+*.pyc
+
+# Tooling caches and reports: useless in the image, they only bloat the build context
+.pytest_cache
+.mypy_cache
+.ruff_cache
+.coverage
+
+.git
+.env
