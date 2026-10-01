@@ -13,7 +13,7 @@ need an independent oracle for the position calculations.
 - Reference vectors come from the JPL Horizons *Vector Table*: center = Sun (body center), reference plane = ecliptic, epoch J2000, default units (km).
 - They are stored with their provenance in `backend/tests/fixtures/horizons_vectors.json` and converted to AU inside the tests (1 AU = 149 597 870.7 km).
 - Test instants use the TDB time scale (`ts.tdb(jd=...)`) so they match Horizons exactly.
-- The initial tolerance is 1e-5 AU (~1500 km) and will be tightened once the real difference is measured. DE421 (used here) and the ephemeris currently used by Horizons differ slightly.
+- The tolerance is 1e-6 AU (~150 km). A scratch experiment with the Earth at J2000 showed differences around 1e-8 AU against Horizons, so this leaves margin for DE421 vs. the ephemeris currently used by Horizons.
 
 ## Consequences
 
