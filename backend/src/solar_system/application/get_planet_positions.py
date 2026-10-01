@@ -38,7 +38,8 @@ class GetPlanetPositions:
 
         positions: tuple[BodyPosition, ...] = tuple(
             BodyPosition(
-                body=body, position=self._provider.get_position(body.id, utc_moment)
+                body=body, position=self._provider.get_position(
+                    body.id, utc_moment)
             )
             for body in SOLAR_SYSTEM
         )
