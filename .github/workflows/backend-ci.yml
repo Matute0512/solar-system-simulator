@@ -1,0 +1,38 @@
+name: Backend CI
+
+# Run on every push to main and on every pull request targeting main.
+# The paths filter avoids running this job when only frontend files change.
+on:
+  push:
+    branches: [main]
+    paths: ["backend/**", ".github/workflows/backend-ci.yml"]
+  pull_request:
+    branches: [main]
+    paths: ["backend/**", ".github/workflows/backend-ci.yml"]
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    # All run steps execute inside ./backend, where pyproject.toml lives.
+    defaults:
+      run:
+        working-directory: backend
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # Installs uv and caches its downloads between runs.
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+
+      # Installs the exact Python version declared in requires-python / .python-version.
+      - run: uv python install 3.10
+
+      # --frozen: fail if uv.lock does not match pyproject.toml (reproducibility).
+      - run: uv sync --frozen
+
+      - run: uv run ruff check .
+      - run: uv run ruff format --check .
+      - run: uv run mypy src
+      - run: uv run pytest
