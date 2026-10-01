@@ -12,5 +12,5 @@ app = FastAPI(title="Solar System Simulator")
 
 
 @app.get("/health", response_model=HealthResponse)
-def get_health():
+def get_health() -> HealthResponse:
     return HealthResponse(status="ok")
