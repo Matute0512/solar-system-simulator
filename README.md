@@ -74,6 +74,17 @@ docker compose up --build
 
 The API is then available at `http://localhost:8000`.
 
+## Coordinate conventions
+
+All positions returned by the API are **heliocentric, geometric, ecliptic J2000,
+in astronomical units (AU)**. See
+[ADR 0001](docs/adr/0001-reference-frame.md) for the rationale. Mapping to
+the 3D scene (axes and scale) is done by the frontend
+([ADR 0002](docs/adr/0002-axes-and-scale-in-frontend.md)).
+
+Calculations are validated against JPL Horizons vector tables
+([ADR 0003](docs/adr/0003-validation-against-jpl-horizons.md)).
+
 ## API documentation
 
 FastAPI generates OpenAPI docs automatically:
@@ -81,9 +92,44 @@ FastAPI generates OpenAPI docs automatically:
 - Swagger UI: `http://localhost:8000/docs`
 - OpenAPI schema: `http://localhost:8000/openapi.json`
 
-| Method | Endpoint | Description |
-|---|---|---|
-| GET | `/health` | Service health check |
+
+| Method | Endpoint | Status | Description |
+|--------|----------|--------|-------------|
+| GET    | `/health`|Available|Service health check|
+| GET | `/api/v1/positions?date=<ISO-8601>` | Planned | Positions of the Sun and the 8 planets for a date |
+
+Planned response:
+
+```json
+{
+  "date": "2000-01-01T12:00:00Z",
+  "frame": "ecliptic-J2000",
+  "origin": "sun",
+  "unit": "AU",
+  "bodies": [
+    { "name": "earth", "position": { "x": -0.177135, "y": 0.967242, "z": -0.000004 } }
+  ]
+}
+```
+
+### Position request flow
+
+```mermaid
+sequenceDiagram
+    participant C as Client
+    participant R as Router (presentation)
+    participant U as GetPlanetPositions (application)
+    participant P as EphemerisProvider (port)
+    participant S as SkyfieldAdapter (infrastructure)
+    C->>R: GET /api/v1/positions?date=...
+    R->>R: Validate date (Pydantic)
+    R->>U: execute(date)
+    U->>P: get_position(body, date)
+    P->>S: implemented by
+    S-->>U: Position (x, y, z in AU)
+    U-->>R: list of bodies
+    R-->>C: JSON response
+```
 
 ## Development
 
