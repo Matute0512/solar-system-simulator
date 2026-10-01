@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+.venv/
+venv/
+*.sqlite3
+
+# Node
+node_modules/
+dist/
+build/
+*.log
+
+# IDEs y sistema
+.vscode/
+.idea/
+.DS_Store
+
+# pytest
+.coverage
+htmlcov/
+coverage.xml
