@@ -10,11 +10,10 @@ Los resultados se formatean y escriben en un archivo de texto con la convención
 from __future__ import annotations
 
 import logging
-import sys
 import warnings
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Final, List, Optional
+from typing import Final
 
 from astropy.table import Table
 from astropy.time import Time
@@ -38,7 +37,7 @@ HEADER_SEPARATOR: Final[str] = "*" * 79
 OBSERVER_LOCATION: Final[str] = "500@10"  # Sun (body center)
 ID_TYPE: Final[str] = "majorbody"
 DEFAULT_OUTPUT_FILE: Final[str] = "horizons_vectores_planetas.txt"
-DISCRETE_EPOCHS: Final[List[str]] = [
+DISCRETE_EPOCHS: Final[list[str]] = [
     "2000-01-01 12:00",
     "2010-01-01 12:00",
 ]
@@ -59,7 +58,7 @@ class TargetBody:
 
 
 # Catálogo ordenado de los 16 objetivos (Baricentro y Planeta individual)
-PLANETARY_TARGETS: Final[List[TargetBody]] = [
+PLANETARY_TARGETS: Final[list[TargetBody]] = [
     # Mercurio
     TargetBody(name="Mercury Barycenter", id="1"),
     TargetBody(name="Mercury", id="199"),
@@ -87,7 +86,7 @@ PLANETARY_TARGETS: Final[List[TargetBody]] = [
 ]
 
 
-def convert_epochs_to_jd(epochs: List[str], scale: str = "tdb") -> List[float]:
+def convert_epochs_to_jd(epochs: list[str], scale: str = "tdb") -> list[float]:
     """
     Convierte una lista de fechas discretas (strings ISO) a fechas julianas (JD).
 
@@ -101,9 +100,9 @@ def convert_epochs_to_jd(epochs: List[str], scale: str = "tdb") -> List[float]:
 def fetch_target_vectors(
     target: TargetBody,
     location: str,
-    epochs_jd: List[float],
+    epochs_jd: list[float],
     id_type: str = ID_TYPE,
-) -> Optional[Table]:
+) -> Table | None:
     """
     Consulta la API de JPL Horizons para obtener la tabla de vectores de estado.
 
@@ -141,7 +140,7 @@ def format_vector_block(target: TargetBody, table: Table) -> str:
      VX={vx:1.15E} VY={vy:1.15E} VZ={vz:1.15E}
      LT={lighttime:1.15E} RG={range:1.15E} RR={range_rate:1.15E}
     """
-    lines: List[str] = [
+    lines: list[str] = [
         HEADER_SEPARATOR,
         f"Target: {target.formatted_name} (ID: {target.id})",
         HEADER_SEPARATOR,
@@ -164,15 +163,16 @@ def format_vector_block(target: TargetBody, table: Table) -> str:
         lines.append(f" X ={x:1.15E} Y ={y:1.15E} Z ={z:1.15E}")
         lines.append(f" VX={vx:1.15E} VY={vy:1.15E} VZ={vz:1.15E}")
         lines.append(
-            f" LT={lighttime:1.15E} RG={range_val:1.15E} RR={range_rate:1.15E}")
+            f" LT={lighttime:1.15E} RG={range_val:1.15E} RR={range_rate:1.15E}"
+        )
 
     return "\n".join(lines)
 
 
 def generate_ephemerides_file(
-    targets: List[TargetBody],
+    targets: list[TargetBody],
     output_path: Path,
-    epochs: List[str] = DISCRETE_EPOCHS,
+    epochs: list[str] = DISCRETE_EPOCHS,
     location: str = OBSERVER_LOCATION,
 ) -> int:
     """
@@ -180,16 +180,17 @@ def generate_ephemerides_file(
 
     Retorna la cantidad de objetivos procesados con éxito.
     """
-    epochs_jd: List[float] = convert_epochs_to_jd(epochs)
+    epochs_jd: list[float] = convert_epochs_to_jd(epochs)
     logger.info("Épocas convertidas a JD: %s", epochs_jd)
 
-    blocks: List[str] = []
+    blocks: list[str] = []
     successful_count: int = 0
     failed_count: int = 0
 
     total_targets = len(targets)
     logger.info(
-        "Iniciando extracción para %d objetivos desde JPL Horizons...", total_targets)
+        "Iniciando extracción para %d objetivos desde JPL Horizons...", total_targets
+    )
 
     for idx, target in enumerate(targets, start=1):
         logger.info(
@@ -214,7 +215,8 @@ def generate_ephemerides_file(
         else:
             failed_count += 1
             logger.warning(
-                "  -> Omitiendo '%s' por error en la consulta.", target.formatted_name)
+                "  -> Omitiendo '%s' por error en la consulta.", target.formatted_name
+            )
 
     # Escritura en archivo de salida
     full_content = "\n\n".join(blocks) + "\n"
