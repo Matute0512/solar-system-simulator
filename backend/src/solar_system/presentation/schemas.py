@@ -44,3 +44,10 @@ class PositionsResponse(BaseModel):
                 for bp in snapshot.positions
             ],
         )
+
+
+class ErrorResponse(BaseModel):
+    """Body returned for errors caused by the request."""
+
+    code: str = Field(description="Stable, machine-readable error code.")
+    detail: str = Field(description="Human-readable explanation.")

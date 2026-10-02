@@ -4,8 +4,12 @@ from datetime import datetime
 import pytest
 from fastapi.testclient import TestClient
 
-from solar_system.application.get_planet_positions import GetPlanetPositions
+from solar_system.application.get_planet_positions import (
+    GetPlanetPositions,
+    PositionsSnapshot,
+)
 from solar_system.domain.celestial_body import BodyId
+from solar_system.domain.errors import EphemerisOutOfRangeError, NaiveDatetimeError
 from solar_system.domain.position import Position
 from solar_system.presentation.dependencies import get_use_case
 from solar_system.presentation.main import app
@@ -84,3 +88,48 @@ def test_endpoint_is_documented_in_openapi(client: TestClient) -> None:
     paths = client.get("/openapi.json").json()["paths"]
 
     assert "/api/v1/positions" in paths
+
+
+class RaisingUseCase:
+    """Test double: a use case that always fails with the given error."""
+
+    def __init__(self, error: Exception) -> None:
+        self._error = error
+
+    def execute(self, moment: datetime) -> PositionsSnapshot:
+        raise self._error
+
+
+def test_date_out_of_range_is_translated_to_422(client: TestClient) -> None:
+    app.dependency_overrides[get_use_case] = lambda: RaisingUseCase(
+        EphemerisOutOfRangeError("No ephemeris data available for 1800-01-01")
+    )
+
+    response = client.get("/api/v1/positions", params={"date": "1800-01-01T00:00:00Z"})
+
+    assert response.status_code == 422
+    assert response.json() == {
+        "code": "date_out_of_range",
+        "detail": "No ephemeris data available for 1800-01-01",
+    }
+
+
+def test_naive_datetime_error_is_translated_to_422(client: TestClient) -> None:
+    app.dependency_overrides[get_use_case] = lambda: RaisingUseCase(
+        NaiveDatetimeError("Datetime must be timezone-aware")
+    )
+
+    response = client.get("/api/v1/positions", params={"date": "2000-01-01T12:00:00Z"})
+
+    assert response.status_code == 422
+    assert response.json()["code"] == "naive_datetime"
+
+
+def test_extreme_dates_are_rejected_with_422(client: TestClient) -> None:
+    # Converting this instant to UTC would overflow the datetime range.
+    response = client.get(
+        "/api/v1/positions", params={"date": "9999-12-31T23:59:59-05:00"}
+    )
+
+    assert response.status_code == 422
+    assert response.json()["code"] == "date_out_of_range"

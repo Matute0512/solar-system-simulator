@@ -2,6 +2,8 @@ from typing import Literal
 
 from fastapi import FastAPI
 from pydantic import BaseModel
+
+from solar_system.presentation.error_handlers import register_error_handlers
 from solar_system.presentation.routers import positions
 
 
@@ -11,6 +13,7 @@ class HealthResponse(BaseModel):
 
 app = FastAPI(title="Solar System Simulator")
 app.include_router(positions.router)
+register_error_handlers(app=app)
 
 
 @app.get("/health", response_model=HealthResponse)
