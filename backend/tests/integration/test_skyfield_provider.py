@@ -11,8 +11,7 @@ from solar_system.domain.errors import EphemerisOutOfRangeError
 from solar_system.infrastructure.skyfield_provider import SkyfieldEphemerisProvider
 
 TOLERANCE_AU = 1e-6  # ~150 km, see ADR 0003
-FIXTURES = Path(__file__).resolve(
-).parents[1] / "fixtures" / "horizons_vectors.json"
+FIXTURES = Path(__file__).resolve().parents[1] / "fixtures" / "horizons_vectors.json"
 
 
 def _load_cases() -> list[Any]:
