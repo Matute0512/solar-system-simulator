@@ -23,6 +23,7 @@ build-backend = "uv_build"
 
 [dependency-groups]
 dev = [
+    "astroquery>=0.4.11",
     "httpx>=0.28.1",
     "mypy>=2.3.1",
     "pre-commit>=4.6.2",
