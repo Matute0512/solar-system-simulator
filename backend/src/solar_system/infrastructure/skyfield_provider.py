@@ -9,9 +9,9 @@ from solar_system.domain.celestial_body import BodyId
 from solar_system.domain.errors import EphemerisOutOfRangeError
 from solar_system.domain.position import Position
 
-_KERNEL_FILE = "de421.bsp"
+_KERNEL_FILE = "de440s.bsp"
 
-# DE421 provides body centers only for the Sun, Mercury, Venus and the Earth.
+# DE440s provides body centers only for the Sun, Mercury, Venus and the Earth.
 # For Mars and the outer planets it only has system barycenters (ADR 0004).
 _KERNEL_NAMES: dict[BodyId, str] = {
     BodyId.SUN: "sun",
@@ -27,7 +27,7 @@ _KERNEL_NAMES: dict[BodyId, str] = {
 
 
 class SkyfieldEphemerisProvider:
-    """Adapter: computes positions with Skyfield and the JPL DE421 kernel."""
+    """Adapter: computes positions with Skyfield and the JPL DE440s kernel."""
 
     def __init__(self, data_dir: Path) -> None:
         data_dir.mkdir(parents=True, exist_ok=True)
