@@ -35,4 +35,8 @@ jobs:
       - run: uv run ruff check .
       - run: uv run ruff format --check .
       - run: uv run mypy src
+      - uses: actions/cache@v4
+        with:
+          path: backend/data
+          key: ephemeris-de421
       - run: uv run pytest
