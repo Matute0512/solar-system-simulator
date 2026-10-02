@@ -25,3 +25,6 @@ build/
 .coverage
 htmlcov/
 coverage.xml
+
+# Documento
+ComandosParaChequeos.md
