@@ -5,7 +5,7 @@
 
 ## Context
 
-The DE421 kernel provides body centers only for the Sun, Mercury, Venus and
+The DE421 and DE440s kernels provide body centers only for the Sun, Mercury, Venus and
 the Earth. For Mars, Jupiter, Saturn, Uranus and Neptune it only provides the
 barycenter of each planetary system. Comparing Horizons body centers with
 barycenters at J2000 gives differences of about 4e-7 AU (Jupiter), 2e-6 AU
