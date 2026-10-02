@@ -66,7 +66,7 @@ def test_sun_is_at_the_origin(provider: SkyfieldEphemerisProvider) -> None:
     assert position.distance_from_origin == pytest.approx(0.0, abs=1e-12)
 
 
-@pytest.mark.parametrize("year", [1800, 2100])
+@pytest.mark.parametrize("year", [1800, 2200])
 def test_raises_when_instant_is_outside_ephemeris_range(
     provider: SkyfieldEphemerisProvider, year: int
 ) -> None:
