@@ -12,6 +12,9 @@ services:
     # We use Python because the slim image does not ship curl.
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      # Loading the kernel at startup takes a few seconds: failures during
+      # this window do not count against the container.
+      start_period: 15s
       interval: 30s
       timeout: 5s
       retries: 3
