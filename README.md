@@ -85,6 +85,9 @@ the 3D scene (axes and scale) is done by the frontend
 Calculations are validated against JPL Horizons vector tables
 ([ADR 0003](docs/adr/0003-validation-against-jpl-horizons.md)).
 
+Positions of Mars and the outer planets are system barycenters
+([ADR 0004](docs/adr/0004-barycenters-for-mars-and-outer-planets.md)).
+
 Requested dates must be timezone-aware ISO-8601 values. They are normalized to
 UTC internally; naive datetimes are rejected.
 
