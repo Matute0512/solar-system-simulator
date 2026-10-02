@@ -8,6 +8,7 @@ __pycache__/
 venv/
 *.sqlite3
 backend/scratch
+backend/data
 
 # Node
 node_modules/
