@@ -38,5 +38,6 @@ jobs:
       - uses: actions/cache@v4
         with:
           path: backend/data
-          key: ephemeris-de421
+          # Keep in sync with _KERNEL_FILE in skyfield_provider.py
+          key: ephemeris-de440s
       - run: uv run pytest
