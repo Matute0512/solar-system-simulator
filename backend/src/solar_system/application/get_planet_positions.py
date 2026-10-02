@@ -32,15 +32,13 @@ class GetPlanetPositions:
 
     def execute(self, moment: datetime) -> PositionsSnapshot:
         if moment.utcoffset() is None:
-            raise NaiveDatetimeError(
-                f"Datetime must be timezone-aware, got {moment!r}")
+            raise NaiveDatetimeError(f"Datetime must be timezone-aware, got {moment!r}")
 
         utc_moment = moment.astimezone(timezone.utc)
 
         positions: tuple[BodyPosition, ...] = tuple(
             BodyPosition(
-                body=body, position=self._provider.get_position(
-                    body.id, utc_moment)
+                body=body, position=self._provider.get_position(body.id, utc_moment)
             )
             for body in SOLAR_SYSTEM
         )
