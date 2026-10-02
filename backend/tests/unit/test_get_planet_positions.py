@@ -4,7 +4,7 @@ import pytest
 
 from solar_system.application.get_planet_positions import GetPlanetPositions
 from solar_system.domain.celestial_body import SOLAR_SYSTEM, BodyId
-from solar_system.domain.errors import NaiveDatetimeError
+from solar_system.domain.errors import EphemerisOutOfRangeError, NaiveDatetimeError
 from solar_system.domain.position import Position
 
 UTC_NOON = datetime(2000, 1, 1, 12, 0, tzinfo=timezone.utc)
@@ -56,3 +56,18 @@ def test_normalizes_any_timezone_to_utc() -> None:
     assert snapshot.moment.utcoffset() == timedelta(0)
     assert snapshot.moment == UTC_NOON
     assert all(moment.utcoffset() == timedelta(0) for _, moment in provider.calls)
+
+
+@pytest.mark.parametrize(
+    "extreme",
+    [
+        datetime(9999, 12, 31, 23, tzinfo=timezone(timedelta(hours=-5))),
+        datetime(1, 1, 1, tzinfo=timezone(timedelta(hours=5))),
+    ],
+    ids=["past-year-9999", "before-year-1"],
+)
+def test_rejects_instants_that_cannot_be_converted_to_utc(extreme: datetime) -> None:
+    use_case = GetPlanetPositions(FakeEphemerisProvider())
+
+    with pytest.raises(EphemerisOutOfRangeError):
+        use_case.execute(extreme)

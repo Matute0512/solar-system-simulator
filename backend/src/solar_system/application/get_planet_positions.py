@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 
 from solar_system.application.ports import EphemerisProvider
 from solar_system.domain.celestial_body import SOLAR_SYSTEM, CelestialBody
-from solar_system.domain.errors import NaiveDatetimeError
+from solar_system.domain.errors import EphemerisOutOfRangeError, NaiveDatetimeError
 from solar_system.domain.position import Position
 
 
@@ -34,7 +34,14 @@ class GetPlanetPositions:
         if moment.utcoffset() is None:
             raise NaiveDatetimeError(f"Datetime must be timezone-aware, got {moment!r}")
 
-        utc_moment = moment.astimezone(timezone.utc)
+        try:
+            utc_moment = moment.astimezone(timezone.utc)
+        except OverflowError as error:
+            # Instants like 9999-12-31T23:59:59-05:00 fall outside the datetime
+            # range once converted to UTC.
+            raise EphemerisOutOfRangeError(
+                f"Instant {moment.isoformat()} cannot be represented in UTC"
+            ) from error
 
         positions: tuple[BodyPosition, ...] = tuple(
             BodyPosition(
