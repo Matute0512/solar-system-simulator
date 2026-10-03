@@ -12,7 +12,5 @@ export default defineConfig({
     test: {
         environment: 'node',
         include: ['tests/**/*.test.js'],
-        // No tests exist yet at this stage; remove once the first one is added.
-        passWithNoTests: true,
     },
 });
