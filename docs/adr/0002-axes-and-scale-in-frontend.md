@@ -14,11 +14,10 @@ astronomical ones.
 
 ## Decision
 
-- The backend never knows how the data is rendered. It documents its frame
-  (ADR 0001) and nothing else.
-- The frontend has a single adapter module that maps API coordinates to scene
-  coordinates (axis remapping preserving handedness).
+- The backend never knows how the data is rendered. It documents its frame (ADR 0001) and nothing else.
+- The frontend has a single adapter module that maps API coordinates to scene coordinates (axis remapping preserving handedness).
 - The AU-to-scene-unit factor is a configurable constant of the frontend.
+- The mapping is (x, y, z) → (x, z, −y): ecliptic north (Z) becomes the vertical axis (Y) and the determinant stays +1, so handedness is preserved. The scale is linear (no compression of distances).
 
 ## Consequences
 
